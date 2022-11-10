@@ -15,18 +15,22 @@ void Server::dealTask(int i)
 	while (true)
 	{
 		std::unique_lock<std::mutex> locker(task_mutex_);
-		// wait for unlock
-		task_cond_.wait(locker);
+		
+		
 		if (!task_queue_.empty())
 		{
-			// TODO: Do some processing
-			std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
+			
 			task_queue_.pop();
-
-			// unlock and notify one to continue to deal
+			// unlock immediately after get a task out
 			locker.unlock();
-			task_cond_.notify_one();
+			task_cond_.notify_all();
+			// TODO: Do some processing
+			std::this_thread::sleep_for( std::chrono::seconds( 5 ) );
+			// unlock and notify one to continue to deal
 			printf("%d: Succeed poping a task.\n", i);
+		} else {
+			// wait for unlock
+			task_cond_.wait(locker);
 		}
 	}
 	puts("Server out.\n");
@@ -34,13 +38,14 @@ void Server::dealTask(int i)
 
 int Server::addTaskToQueue(int sd, char content[])
 {
-	std::unique_lock<std::mutex> locker(task_mutex_);
+	
 	Task new_task;
 	new_task.sd = sd;
+	strcpy(new_task.content, content);
+	std::unique_lock<std::mutex> locker(task_mutex_);
 	task_queue_.push(new_task);
 	locker.unlock();
-	task_cond_.notify_one();
-	// strcpy(new_task.content, content);
+	task_cond_.notify_all();
 }
 
 int Server::init()
