@@ -2,22 +2,22 @@
 
 int Client::init()
 {
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((sock_ = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         perror("Socket failed");
 		return FAIL_INIT;
     }
 
-    address.sin_family = AF_INET;
-    address.sin_port = htons(PORT);
+    address_.sin_family = AF_INET;
+    address_.sin_port = htons(PORT);
 
-    if (inet_pton(AF_INET, "127.0.0.1", &address.sin_addr) <= 0) 
+    if (inet_pton(AF_INET, "127.0.0.1", &address_.sin_addr) <= 0) 
     {
         perror("Invalid address");
         return FAIL_INIT;
     }
 
-    if ((client_fd = connect(sock, (struct sockaddr*)&address, sizeof(address))) < 0) 
+    if ((client_fd_ = connect(sock_, (struct sockaddr*)&address_, sizeof(address_))) < 0) 
     {
         perror("Connection failed");
         return FAIL_INIT;
@@ -27,15 +27,24 @@ int Client::init()
 
 }
 
-int Client::testSendRequest(char* s)
+// just send all input string entered by user
+int Client::testSendRequest()
 {
-    send(sock, s, strlen(s), 0);
+    
+    char toSend[MAX_BUFFER];
+
     while (true)
     {
-        valread = read(sock, buffer, 2048);
-        printf("%s\n", buffer);
+        std::cin >> toSend;
+        send(sock_, toSend, strlen(toSend), 0);
+        std::cout << "Send successful. [" << toSend << "]\n";
+
+        valread_ = read(sock_, buffer_, MAX_BUFFER);
+        // set the receiving data length
+        buffer_[valread_] = '\0';
+        printf("Receiced: %s\n", buffer_);
+
     }
-    valread = read(sock, buffer, 2048);
-    printf("%s\n", buffer);
+        
     return 0;
 }

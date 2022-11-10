@@ -1,5 +1,7 @@
 #define PORT 8888
 
+#define MAX_BUFFER 2048
+
 #define TRUE 1
 #define FALSE 0
 
@@ -11,14 +13,18 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <iostream>
 class Client 
 {
 public:
+    // Initialize for the client
     int init();
-    int testSendRequest(char* s);
+
+    // Test for connction, sending a message to server
+    int testSendRequest();
 
 private:
-    int sock = 0, valread, client_fd;
-    struct sockaddr_in address;
-    char buffer[2048 + 1] = {};
+    int sock_ = 0, valread_, client_fd_;
+    struct sockaddr_in address_;
+    char buffer_[MAX_BUFFER + 1] = {};
 };

@@ -1,8 +1,11 @@
 #define PORT 8888
 
+
+#define MAX_BUFFER 2048
+#define TASK_DEALER_NUMBER 5
+
 #define TRUE 1
 #define FALSE 0
-
 #define FAIL_INIT 101;
 #define FAIL_SHUTDOWN 102;
 
@@ -18,24 +21,56 @@
 #include <netinet/in.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 
+#include <thread>
+#include <queue>
+#include <string>
+#include "../Entity/Task.h"
+
+#include <iostream> // std::cout
+#include <deque>    // std::deque
+#include <chrono>   // std::chrono
+#include <mutex>    // std::mutex
+#include <condition_variable>
+
+using std::queue;
+
 class Server
 {
 public:
     Server();
+   
     int init();
     int run();
+    // put requests from clients to the task-dealing queue
+    int addTaskToQueue(int sd, char content[]);
+    void dealTask(int i);
+
+    // task-dealing function
+    
 
 private:
-    int opt = TRUE;
-    int master_socket , addrlen , new_socket , client_socket[30] ,
-		max_clients = 30 , activity, i , valread , sd;
+    int opt_ = TRUE;
+    int master_socket_ , addrlen_ , new_socket_ , client_socket_[30] ,
+		max_clients_ = 30 , activity_, i , valread_ , sd_;
 	int max_sd;
-	struct sockaddr_in address;
+	struct sockaddr_in address_;
 
     // data buffer
-    char buffer[2048 + 1];
+    char buffer_[MAX_BUFFER + 1];
 
-    fd_set readfds;
+    fd_set readfds_;
+
+
+    // task queue for dealing requests from clients
+    queue<Task> task_queue_;
+    // mutex for task_queue_
+    std::mutex task_mutex_;
+    // create n task_dealer threads
+    std::thread task_dealer_[TASK_DEALER_NUMBER];
+    // cond for mutex
+    std::condition_variable task_cond_;
+    
+
 
 
 };
