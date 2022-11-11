@@ -24,7 +24,7 @@ bool Train::buyTicket(int from_station, int to_station)
 bool Train::isEnoughTickets(int from_station, int to_station)
 {
     
-    if (to_station <= from_station)
+    if (to_station <= from_station || to_station >= station_number_|| from_station >= station_number_)
     {
         return false;
     }
@@ -44,7 +44,7 @@ bool Train::isEnoughTickets(int from_station, int to_station)
 int Train::getTicketNumber(int from_station, int to_station)
 {
 
-    if (to_station <= from_station)
+    if (to_station <= from_station || to_station >= station_number_ || from_station >= station_number_)
     {
         return 0;
     }

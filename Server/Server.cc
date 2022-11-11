@@ -19,15 +19,36 @@ void Server::dealTask(int i)
 		
 		if (!task_queue_.empty())
 		{
-			
+			// get the task and pop it
+			Task to_deal_task = task_queue_.front();
 			task_queue_.pop();
 			// unlock immediately after get a task out
 			locker.unlock();
 			task_cond_.notify_all();
-			// TODO: Do some processing
-			std::this_thread::sleep_for( std::chrono::seconds( 5 ) );
-			// unlock and notify one to continue to deal
-			printf("%d: Succeed poping a task.\n", i);
+
+			// get the task type
+			// see details in Task.h
+			int task_type = to_deal_task.decode();
+			vector<int> task_args = to_deal_task.getRequestArguments();
+			int isOk = 0;
+			switch (task_type) {
+				case 1:
+					// TODO: need to judge task_args.size()
+					isOk = test_train.buyTicket(task_args[0], task_args[1]);
+					if (isOk)
+					{
+						puts("debug: Ticket book success");
+					} else {
+						puts("debug: fail.");
+					}
+					break;
+
+				default:
+					puts("Error: wrong task type.");
+
+			}
+
+		
 		} else {
 			// wait for unlock
 			task_cond_.wait(locker);
@@ -39,9 +60,7 @@ void Server::dealTask(int i)
 int Server::addTaskToQueue(int sd, char content[])
 {
 	
-	Task new_task;
-	new_task.sd = sd;
-	strcpy(new_task.content, content);
+	Task new_task(sd, content);
 	std::unique_lock<std::mutex> locker(task_mutex_);
 	task_queue_.push(new_task);
 	locker.unlock();

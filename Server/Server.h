@@ -74,5 +74,7 @@ private:
     std::condition_variable task_cond_;
 
 
+    // create a test train
+    Train test_train{100, 10};
 
 };

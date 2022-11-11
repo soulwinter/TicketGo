@@ -35,7 +35,7 @@ int Client::testSendRequest()
 
     while (true)
     {
-        std::cin >> toSend;
+        std::cin.getline(toSend, 80);
         send(sock_, toSend, strlen(toSend), 0);
         std::cout << "Send successful. [" << toSend << "]\n";
 
