@@ -22,15 +22,18 @@
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 
 #include <thread>
-#include <queue>
-#include <string>
-#include "../Entity/Task.h"
-
 #include <iostream> // std::cout
 #include <deque>    // std::deque
 #include <chrono>   // std::chrono
 #include <mutex>    // std::mutex
 #include <condition_variable>
+#include <queue>
+#include <string>
+
+
+#include "../Entity/Task.h"
+#include "../Entity/Train.h"
+
 
 using std::queue;
 
@@ -69,7 +72,6 @@ private:
     std::thread task_dealer_[TASK_DEALER_NUMBER];
     // cond for mutex
     std::condition_variable task_cond_;
-    
 
 
 
