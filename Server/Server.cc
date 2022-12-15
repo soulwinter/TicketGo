@@ -28,25 +28,15 @@ void Server::dealTask(int i)
 
 			// get the task type
 			// see details in Task.h
-			int task_type = to_deal_task.decode();
-			vector<int> task_args = to_deal_task.getRequestArguments();
-			int isOk = 0;
-			switch (task_type) {
-				case 1:
-					// TODO: need to judge task_args.size()
-					isOk = test_train.buyTicket(task_args[0], task_args[1]);
-					if (isOk)
-					{
-						puts("debug: Ticket book success");
-					} else {
-						puts("debug: fail.");
-					}
-					break;
-
-				default:
-					puts("Error: wrong task type.");
-
+			int isOk = to_deal_task.doTask(test_train);
+			if (isOk)
+			{
+				send(to_deal_task.getSd(), "success" , strlen("success") , 0);
+				printf("seats: %d\n", test_train.getTicketNumber(to_deal_task.getRequestArguments()[0], to_deal_task.getRequestArguments()[1]));
+				
 			}
+			
+			
 
 		
 		} else {
@@ -215,7 +205,7 @@ int Server::run()
 					printf("Sent to [%d]: %s\n", sd_, buffer_);
 					// add tasks to queue
 					addTaskToQueue(sd_, buffer_);
-					send(sd_ , buffer_ , strlen(buffer_) , 0);
+					// send(sd_ , buffer_ , strlen(buffer_) , 0);
 				}
 			}
 		}

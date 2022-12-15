@@ -3,6 +3,9 @@
 #include <stdlib.h>  // atoi
 #include <string.h>
 #include <vector>
+
+#include "Train.h"
+
 using std::vector;
 
 class Task
@@ -35,6 +38,11 @@ public:
     //return operate_arguments_
     vector<int> getRequestArguments();
 
+    // return sd
+    int getSd();
+
+    // do the task for 
+    bool doTask(Train& train);
 
 
 };
