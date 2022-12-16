@@ -1,3 +1,4 @@
+#pragma once
 #define PORT 8888
 
 #define MAX_BUFFER 2048

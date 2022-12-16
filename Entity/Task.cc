@@ -1,6 +1,6 @@
 #include "Task.h"
 
-Task::Task(int sd, char content[]) : sd_(sd)
+Task::Task(int sd, char content[], vector<Ticket>& tickets) : sd_(sd), tickets_(tickets)
 {
     strcpy(content_, content);
 }
@@ -37,7 +37,7 @@ int Task::getSd()
     return sd_;
 }
 
-bool Task::doTask(Train& train)
+Message Task::doTask(Train& train)
 {
     // first decode the content
     if(decode() != -1)
@@ -46,7 +46,14 @@ bool Task::doTask(Train& train)
         {
         case 1:
             // 1 means buy tickets
-            return train.buyTicket(operate_arguments_[0], operate_arguments_[1]);
+            if (train.buyTicket(operate_arguments_[0], operate_arguments_[1]))
+            {
+                // create a new ticket
+
+                tickets_.push_back(Ticket(sd_, train.getTrainID(), train.getAbsoluteStationID(operate_arguments_[0]), train.getAbsoluteStationID(operate_arguments_[1])));
+                Message to_send_message{1, "预定成功!"};
+                return to_send_message;
+            }
             break;
         
         default:
@@ -54,6 +61,7 @@ bool Task::doTask(Train& train)
         }
     } else {
         // return -1 means failed, return false
-        return false;
+        Message to_send_message{-1, "操作失败，请重试。"};
+        return to_send_message;
     }
 }

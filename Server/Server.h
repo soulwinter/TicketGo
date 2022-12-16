@@ -1,3 +1,4 @@
+#pragma once
 #define PORT 8888
 
 
@@ -33,6 +34,7 @@
 
 #include "../Entity/Task.h"
 #include "../Entity/Train.h"
+#include "../Entity/Ticket.h"
 
 
 using std::queue;
@@ -42,7 +44,9 @@ class Server
 public:
     Server();
    
-    int init();
+    int initServer();
+    int initSystems();
+
     int run();
     // put requests from clients to the task-dealing queue
     int addTaskToQueue(int sd, char content[]);
@@ -74,7 +78,10 @@ private:
     std::condition_variable task_cond_;
 
 
-    // create a test train
-    Train test_train{100, 10};
+    
+    // create a test train, station_number should be 11~15
+    Train test_train{100, 10, 1};
+    vector<Ticket> tickets_;
+    
 
 };

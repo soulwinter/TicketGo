@@ -1,3 +1,4 @@
+#pragma once
 #define MAX_BUFFER 2048
 #include <stdio.h>
 #include <stdlib.h>  // atoi
@@ -5,8 +6,14 @@
 #include <vector>
 
 #include "Train.h"
+#include "Ticket.h"
 
 using std::vector;
+
+struct Message {
+    int code;
+    char message[MAX_BUFFER];
+};
 
 class Task
 {
@@ -23,9 +30,10 @@ private:
 
     int operate_number_ = -1;
     vector<int> operate_arguments_;
+    vector<Ticket>& tickets_;
 
 public:
-    Task(int sd, char content[]);
+    Task(int sd, char content[], vector<Ticket>& tickets);
 
     // Decode the content from the char[]
     // ret: [1]Buy tickets
@@ -42,7 +50,8 @@ public:
     int getSd();
 
     // do the task for 
-    bool doTask(Train& train);
+    Message doTask(Train& train);
 
 
 };
+

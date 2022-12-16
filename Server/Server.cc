@@ -1,4 +1,5 @@
 #include "Server.h"
+extern vector<Station> all_stations;
 
 Server::Server()
 {
@@ -19,7 +20,7 @@ void Server::dealTask(int i)
 		
 		if (!task_queue_.empty())
 		{
-			// get the task and pop it
+			// get the to-do task and pop it
 			Task to_deal_task = task_queue_.front();
 			task_queue_.pop();
 			// unlock immediately after get a task out
@@ -28,12 +29,15 @@ void Server::dealTask(int i)
 
 			// get the task type
 			// see details in Task.h
-			int isOk = to_deal_task.doTask(test_train);
-			if (isOk)
+			Message isOk = to_deal_task.doTask(test_train);
+			if (isOk.code)
 			{
-				send(to_deal_task.getSd(), "success" , strlen("success") , 0);
+				send(to_deal_task.getSd(), isOk.message , strlen(isOk.message) , 0);
+				// print the available seats quantity
 				printf("seats: %d\n", test_train.getTicketNumber(to_deal_task.getRequestArguments()[0], to_deal_task.getRequestArguments()[1]));
 				
+			} else {
+				send(to_deal_task.getSd(), isOk.message , strlen(isOk.message) , 0);
 			}
 			
 			
@@ -50,14 +54,14 @@ void Server::dealTask(int i)
 int Server::addTaskToQueue(int sd, char content[])
 {
 	
-	Task new_task(sd, content);
+	Task new_task(sd, content, tickets_);
 	std::unique_lock<std::mutex> locker(task_mutex_);
 	task_queue_.push(new_task);
 	locker.unlock();
 	task_cond_.notify_all();
 }
 
-int Server::init()
+int Server::initServer()
 {
     //create a master socket
 	if( (master_socket_ = socket(AF_INET , SOCK_STREAM , 0)) == 0)
@@ -107,6 +111,16 @@ int Server::init()
 	{
 		task_dealer_[i].detach();
 	}
+
+}
+
+int Server::initSystems()
+{
+	// global variable defined in Station.h
+	
+	
+
+	
 
 }
 
@@ -196,13 +210,12 @@ int Server::run()
 					client_socket_[i] = 0;
 				}
 					
-				//Echo back the message that came in
 				else
 				{
 					//set the string terminating NULL byte on the end
 					//of the data read
 					buffer_[valread_] = '\0';
-					printf("Sent to [%d]: %s\n", sd_, buffer_);
+					printf("Received from [%d]: %s\n", sd_, buffer_);
 					// add tasks to queue
 					addTaskToQueue(sd_, buffer_);
 					// send(sd_ , buffer_ , strlen(buffer_) , 0);
