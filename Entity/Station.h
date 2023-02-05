@@ -4,6 +4,7 @@
 #include <vector>
 using std::vector;
 
+
 class Station
 {
 private:
@@ -13,8 +14,8 @@ private:
     int distance_;
 public:
     static int station_quantity_;
-    Station(char[], int);
-    char* getName();
+    Station(const char*, int);
+    char *getName();
     int getDistance();
     int getStationID();
     int getDistanceBetween(const Station& station);

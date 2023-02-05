@@ -26,6 +26,8 @@ private:
     // each_available_seats_[i] means the available seat number from station[i] to staion[i+1]
     vector<int> each_available_seats_;
 
+    vector<int> max_sold_seats_;
+
     
 public:
     // TODO: id
@@ -48,6 +50,7 @@ public:
     // Converts the relative station ID of a train to an absolute ID
     int getAbsoluteStationID(int id);
 
+    void refundTicket(int from_station, int to_station);
    
 
     

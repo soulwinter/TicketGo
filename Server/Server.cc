@@ -7,6 +7,14 @@ Server::Server()
 	{
 		client_socket_[i] = 0;
 	}
+	// create a test train, station_number should be 11~15
+	trains_.push_back(Train(100, 11, 0));
+	trains_.push_back(Train(100, 13, 1));
+	trains_.push_back(Train(100, 15, 2));
+	trains_.push_back(Train(100, 12, 3));
+	
+	
+    
 	
 }
 
@@ -29,19 +37,17 @@ void Server::dealTask(int i)
 
 			// get the task type
 			// see details in Task.h
-			Message isOk = to_deal_task.doTask(test_train);
+			Message isOk = to_deal_task.doTask(trains_);
 			if (isOk.code)
 			{
 				send(to_deal_task.getSd(), isOk.message , strlen(isOk.message) , 0);
 				// print the available seats quantity
-				printf("seats: %d\n", test_train.getTicketNumber(to_deal_task.getRequestArguments()[0], to_deal_task.getRequestArguments()[1]));
+				// printf("seats: %d\n", test_train.getTicketNumber(to_deal_task.getRequestArguments()[0], to_deal_task.getRequestArguments()[1]));
 				
 			} else {
 				send(to_deal_task.getSd(), isOk.message , strlen(isOk.message) , 0);
 			}
 			
-			
-
 		
 		} else {
 			// wait for unlock
@@ -111,16 +117,6 @@ int Server::initServer()
 	{
 		task_dealer_[i].detach();
 	}
-
-}
-
-int Server::initSystems()
-{
-	// global variable defined in Station.h
-	
-	
-
-	
 
 }
 

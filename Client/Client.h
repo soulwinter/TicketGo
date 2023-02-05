@@ -22,7 +22,28 @@ public:
     int init();
 
     // Test for connction, sending a message to server
-    int testSendRequest();
+    int core();
+
+    // Welcome Printer
+    void welcomePrinter();
+
+    // read the operation and do
+    int operations();
+
+    int showAllTrains();
+
+    int sendRequest(const char* content);
+
+    int buyTicketByTrain();
+
+    int checkMyTickets();
+
+    int refund();
+
+    int checkIncome();
+
+    int checkAvailableSeats();
+    
 
 private:
     int sock_ = 0, valread_, client_fd_;

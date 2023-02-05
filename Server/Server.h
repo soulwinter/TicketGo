@@ -45,7 +45,6 @@ public:
     Server();
    
     int initServer();
-    int initSystems();
 
     int run();
     // put requests from clients to the task-dealing queue
@@ -79,8 +78,8 @@ private:
 
 
     
-    // create a test train, station_number should be 11~15
-    Train test_train{100, 10, 1};
+    
+    vector<Train> trains_;
     vector<Ticket> tickets_;
     
 

@@ -9,6 +9,7 @@
 #include "Ticket.h"
 
 using std::vector;
+using std::to_string;
 
 struct Message {
     int code;
@@ -50,7 +51,8 @@ public:
     int getSd();
 
     // do the task for 
-    Message doTask(Train& train);
+    Message doTask(vector<Train>& train);
+
 
 
 };

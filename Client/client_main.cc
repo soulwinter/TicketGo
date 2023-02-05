@@ -4,5 +4,5 @@ int main()
 {
     Client a;
     a.init();
-    a.testSendRequest();
+    a.core();
 }

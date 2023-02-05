@@ -1,6 +1,6 @@
 #include "Station.h"
 
-Station::Station(char name[], int distance) : distance_(distance), station_id_(station_quantity_)
+Station::Station(const char* name, int distance) : distance_(distance), station_id_(station_quantity_)
 {
     strcpy(name_, name);
     station_quantity_++;

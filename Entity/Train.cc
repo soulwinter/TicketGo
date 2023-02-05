@@ -4,7 +4,14 @@ extern vector<Station> all_stations;
 Train::Train(int capacity, int station_number, int train_id) : capacity_(capacity), station_number_(station_number), train_id_(train_id)
 {
     // Initialize seats to all available
+    // the very first method: No limit
     each_available_seats_.insert(each_available_seats_.begin(), station_number_ - 1, capacity);
+    // add limit to selling
+    for (int i = 0; i < station_number_ - 1; i++)
+    {
+        max_sold_seats_.push_back(capacity * station_number / (station_number - (i + 1)) / (i + 1));
+    }
+
     // randomly generate not_passed_stations
     set<int> not_passed_stations;
     while (not_passed_stations.size() < all_stations.size() - station_number)
@@ -35,9 +42,21 @@ bool Train::buyTicket(int from_station, int to_station)
         {
             each_available_seats_[i]--;
         }
+        int min_station = from_station > station_number_ - 2 - to_station ? to_station - 1 : from_station;
+        max_sold_seats_[min_station]--;
         return true;
     } 
     return false;
+}
+
+void Train::refundTicket(int from_station, int to_station)
+{
+    for (int i = from_station; i < to_station; i++)
+        {
+            each_available_seats_[i]++;
+        }
+    int min_station = from_station > station_number_ - 2 - to_station ? to_station - 1 : from_station;
+    max_sold_seats_[min_station]++;
 }
 
 bool Train::isEnoughTickets(int from_station, int to_station)
@@ -47,14 +66,21 @@ bool Train::isEnoughTickets(int from_station, int to_station)
     {
         return false;
     }
-
+    // add limit
+    int min_station = from_station > station_number_ - 2 - to_station ? to_station - 1 : from_station;
+    if (max_sold_seats_[min_station] <= 0)
+    {
+        return false;
+    }
     for (int i = from_station; i < to_station; i++)
     {
         if (each_available_seats_[i] <= 0)
         {
             return false;
-        }
+        } 
+        
     }
+    
     return true;
 }
 
@@ -81,8 +107,15 @@ int Train::getTicketNumber(int from_station, int to_station)
             }
         }
     }
+    // add limit
+    int min_station = from_station > station_number_ - 2 - to_station ? to_station - 1 : from_station;
+    if (max_sold_seats_[min_station] <= 0)
+    {
+        return 0;
+    }
 
-    return min_ticket_number;
+    return min_ticket_number < max_sold_seats_[min_station] ? min_ticket_number : max_sold_seats_[min_station];
+    // return min_ticket_number;
 }
 
 int Train::getAbsoluteStationID(int id)
